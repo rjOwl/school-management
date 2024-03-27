@@ -74,6 +74,9 @@ Used to generate unique IDs incrementally.
 - `model`
 - `seq`
 
+## Swagger API doc
+#### /api-docs/ 
+- (with current configs it will be at ): http://127.0.0.1:5111/api-docs/
 ## Endpoints
 
 ### Users
