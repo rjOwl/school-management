@@ -1,0 +1,223 @@
+openapi: 3.0.0
+info:
+  title: School Management API
+  version: 1.0.0
+  description: API for managing users, schools, and classrooms
+servers:
+  - url: https://careful-wrap.cyclic.app/
+  - url: http://localhost:5111
+  - url: http://localhost:3000
+paths:
+  /user/createAdmin:
+    post:
+      summary: Create admin user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                email:
+                  type: string
+                role:
+                  type: string
+      responses:
+        "200":
+          description: Admin user created successfully
+        "400":
+          description: User already exists Or validation error
+  /user/create:
+    post:
+      summary: Create user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                email:
+                  type: string
+                role:
+                  type: string
+      responses:
+        "200":
+          description: User created successfully
+        "400":
+          description: User already exists Or validation error
+  /user/login:
+    post:
+      summary: User login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Logged in successfully
+          headers:
+            token:
+              schema:
+                type: string
+              description: JWT token
+  /api/school/getAll:
+    get:
+      summary: Get all schools
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: List of schools
+  /api/school/get/{id}:
+    get:
+      summary: Get school by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: School details
+        "404":
+          description: School not found
+  /api/school/update/{id}:
+    put:
+      summary: Update school by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                address:
+                  type: string
+                website:
+                  type: string
+                schoolManager:
+                  type: string
+                id:
+                  type: integer
+      responses:
+        "200":
+          description: School updated successfully
+        "404":
+          description: School not found
+  /api/school/delete/{id}:
+    delete:
+      summary: Delete school by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: School deleted successfully
+        "404":
+          description: School not found
+  /api/classroom/getAll:
+    get:
+      summary: Get all classrooms
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: List of classrooms
+  /api/classroom/get/{id}:
+    get:
+      summary: Get classroom by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Classroom details
+        "404":
+          description: Classroom not found
+  /api/classroom/update/{id}:
+    put:
+      summary: Update classroom by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                school:
+                  type: integer
+      responses:
+        "200":
+          description: Classroom updated successfully
+        "404":
+          description: Classroom not found
+  /api/classroom/delete/{id}:
+    delete:
+      summary: Delete classroom by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Classroom deleted successfully
+        "404":
+          description: Classroom not found
+securitySchemes:
+  BearerAuth:
+    type: http
+    scheme: bearer
+    bearerFormat: JWT

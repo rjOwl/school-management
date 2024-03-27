@@ -1,5 +1,6 @@
-module.exports = ({ meta, config, managers }) =>{
-    return ({req, res, next})=>{
-        next(req.query);
-    }
-}
+module.exports = ({ meta, config, managers }) => {
+  return ({ req, res, next }) => {
+    console.log("The query request: ", req.query);
+    next(req.query);
+  };
+};

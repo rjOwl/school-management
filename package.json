@@ -1,10 +1,13 @@
 {
   "name": "axion",
-  "version": "0.1.0",
-  "description": "Boilerplate",
+  "version": "1.0.0",
+  "description": "Implementing basic crud on classroom, students, and school",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "unit-tests": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "prod": "node app.js"
   },
   "author": "",
   "license": "ISC",

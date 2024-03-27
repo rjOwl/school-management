@@ -4,6 +4,7 @@ const os                               = require('os');
 const pjson                            = require('../package.json');
 const utils                            = require('../libs/utils');
 const SERVICE_NAME                     = (process.env.SERVICE_NAME)? utils.slugify(process.env.SERVICE_NAME):pjson.name;
+const HOST                             = process.env.HOST || "0.0.0.0";
 const USER_PORT                        = process.env.USER_PORT || 5111;
 const ADMIN_PORT                       = process.env.ADMIN_PORT || 5222;
 const ADMIN_URL                        = process.env.ADMIN_URL || `http://localhost:${ADMIN_PORT}`;
@@ -21,32 +22,30 @@ const CACHE_PREFIX                     = process.env.CACHE_PREFIX || `${SERVICE_
 
 const MONGO_URI                        = process.env.MONGO_URI || `mongodb://localhost:27017/${SERVICE_NAME}`;
 const config                           = require(`./envs/${ENV}.js`);
-const LONG_TOKEN_SECRET                = process.env.LONG_TOKEN_SECRET || null;
-const SHORT_TOKEN_SECRET               = process.env.SHORT_TOKEN_SECRET || null;
-const NACL_SECRET                      = process.env.NACL_SECRET || null;
+const LONG_TOKEN_SECRET                = process.env.LONG_TOKEN_SECRET || "8a3f0b6dcf76e24fc62d145489b10128" || null;
+const SHORT_TOKEN_SECRET               = process.env.SHORT_TOKEN_SECRET || "5291e268asd2a1468d1" || null;
+const NACL_SECRET                      = process.env.NACL_SECRET || "d9aa9e702cf30a7e99ec31e0f1abf128" ||null;
 
 if(!LONG_TOKEN_SECRET || !SHORT_TOKEN_SECRET || !NACL_SECRET) {
-    throw Error('missing .env variables check index.config');
+  throw Error('missing .env variables check index.config');
 }
 
 config.dotEnv = {
-    SERVICE_NAME,
-    ENV,
-    CORTEX_REDIS,
-    CORTEX_PREFIX,
-    CORTEX_TYPE,
-    OYSTER_REDIS,
-    OYSTER_PREFIX,
-    CACHE_REDIS,
-    CACHE_PREFIX,
-    MONGO_URI,
-    USER_PORT,
-    ADMIN_PORT,
-    ADMIN_URL,
-    LONG_TOKEN_SECRET,
-    SHORT_TOKEN_SECRET,
+  SERVICE_NAME,
+  ENV,
+  CORTEX_REDIS,
+  CORTEX_PREFIX,
+  CORTEX_TYPE,
+  OYSTER_REDIS,
+  OYSTER_PREFIX,
+  CACHE_REDIS,
+  CACHE_PREFIX,
+  MONGO_URI,
+  USER_PORT,
+  ADMIN_PORT,
+  ADMIN_URL,
+  LONG_TOKEN_SECRET,
+  SHORT_TOKEN_SECRET,
 };
-
-
 
 module.exports = config;
