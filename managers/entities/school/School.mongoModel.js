@@ -29,6 +29,12 @@ const School = new mongoose.Schema({
       ref: "classrooms",
     },
   ],
+  students: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
+    },
+  ],
   totalStudents: {
     type: Number,
     default: 0,

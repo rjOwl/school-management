@@ -2,6 +2,7 @@ const restfulServices = require("../../api/rest-controller");
 const Roles = require("../user/utils");
 const SchoolModel = require("./School.mongoModel");
 const UserModel = require("../user/User.mongoModel");
+const ClassroomModel = require("../classroom/Classroom.mongoModel");
 
 module.exports = class School {
   constructor({
@@ -26,10 +27,13 @@ module.exports = class School {
       "put=update",
       "delete=delete",
       "get=get",
+      "put=admitStudentToSchool",
+      "put=assignStudentToClass"
     ];
     // Initialize restful services for School and User models
     this.schoolServices = restfulServices(SchoolModel);
     this.userServices = restfulServices(UserModel);
+    this.classroomServices = restfulServices(ClassroomModel);
   }
 
   /**
@@ -206,6 +210,58 @@ module.exports = class School {
     return (
       userRole ===Roles.SUPER_ADMIN && user && user.role ===Roles.SUPER_ADMIN
     );
+  }
+
+  async admitStudentToSchool({__longToken, studentId, schoolId}) {
+    console.log("Inside admitStudentToSchool: ", __longToken, studentId, schoolId)
+    // Check if the user is authorized to update a school
+    if (!(await this.canManageSchoolModel(__longToken))) {
+      return this.unauthorizedResponse();
+    }
+
+    const student = await this.userServices.get({ id: studentId });
+    if(!student)
+    return this.errorResponse("Student doesn't exist.", 400);
+
+    const school = await this.schoolServices.update({id: schoolId, 'students': { $ne: student._id } }, {$addToSet: {students: student._id}});
+    console.log("school: ", school);
+
+    if(!school)
+      return this.errorResponse("Error admiting student.", 400);
+
+    if(school)
+      return this.successResponse("School updated successfully", 204);
+
+      console.log("student user:", student, school)
+  }
+
+  async assignStudentToClass({__longToken, studentId, schoolId, classId }) {
+    
+    console.log("Inside admitStudentToSchool: ", __longToken, studentId, schoolId, classId)
+    // Check if the user is authorized to update a school
+    if (!(await this.canManageSchoolModel(__longToken))) {
+      return this.unauthorizedResponse();
+    }
+
+    const classroomObj = await this.classroomServices.get({id: classId});
+    if(!classroomObj)
+    return this.errorResponse("classroom doesn't exist.", 400);
+
+    const student = await this.userServices.get({ id: studentId });
+    if(!student)
+    return this.errorResponse("Student doesn't exist.", 400);
+
+    const school = await this.schoolServices.get({id: schoolId, 'classrooms': { $eq: classroomObj._id }});
+    console.log("school: ", school);
+
+    if(!school)
+      return this.successResponse("School doesn't exist", 400);
+
+    const classroom = await this.classroomServices.update({id: classId, school: school._id, 'students': { $ne: student._id } }, {$addToSet: {students: student._id}});
+    if(!classroom)
+      return this.errorResponse("Error admiting student to class.", 400);
+
+      console.log("student user:", student, school)
   }
 
   /**
