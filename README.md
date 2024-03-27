@@ -101,22 +101,25 @@ Used to generate unique IDs incrementally.
 - **HTTP Method:** GET
 - **Requires token in header**
 
-#### /api/school/get/:id
+#### /api/school/get
 
 - **HTTP Method:** GET
 - **Requires token in header**
+- **Payload:** `id`
 
-#### /api/school/update/:id
+#### /api/school/update
 
 - **HTTP Method:** PUT
 - **Note:** Accessible only by superAdmin
 - **Requires token in header**
+- **Payload:** `id`
 
-#### /api/school/delete/:id
+#### /api/school/delete
 
 - **HTTP Method:** DELETE
 - **Note:** Accessible only by superAdmin
 - **Requires token in header**
+- **Payload:** `id`
 
 ### Classroom
 
@@ -125,20 +128,23 @@ Used to generate unique IDs incrementally.
 - **HTTP Method:** GET
 - **Requires token in header**
 
-#### /api/classroom/get/:id
+#### /api/classroom/get
 
 - **HTTP Method:** GET
 - **Requires token in header**
+- **Payload:** `id`
 
-#### /api/classroom/update/:id
+#### /api/classroom/update
 
 - **HTTP Method:** PUT
 - **Note:** Accessible by manager or superAdmin
 - **Requires token in header**
+- **Payload:** `id`
 
-#### /api/classroom/delete/:id
+#### /api/classroom/delete
 
 - **HTTP Method:** DELETE
 - **Note:** Accessible by manager or superAdmin
 - **Requires token in header**
+- **Payload:** `id`
 

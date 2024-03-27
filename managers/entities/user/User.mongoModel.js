@@ -39,7 +39,7 @@ const User = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "classrooms",
   },
-});
+}, {timestamps: true});
 
 preCreateDoc(User);
 
