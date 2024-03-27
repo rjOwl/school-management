@@ -12,7 +12,7 @@ class User {
     this.mongomodels = mongomodels;
     this.tokenManager = managers.token;
     this.usersCollection = "users";
-    this.httpExposed = ["createUser", "login", "createAdmin"];
+    this.httpExposed = ["post=createUser", "login", "post=createAdmin"];
     this.restServices = restfulServices(UserModel);
     this.managers = managers;
   }
@@ -34,8 +34,8 @@ class User {
   // TODO:
   // Create a new user, only school admin can create a new user
   // Only SuperAdmin can create a school
-  async createUser({  username, email, password, role = Roles.STUDENT }) {
-    const payload = { username, email, password, role };
+  async createUser({  name, username, email, password, role = Roles.STUDENT }) {
+    const payload = { name, username, email, password, role };
     // check if role exists and is anything but super admin and manager
      if ( Object.values(Roles).includes(role) &&
           (role!==Roles.SUPER_ADMIN && role !==Roles.MANAGER)) {
