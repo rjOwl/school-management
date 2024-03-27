@@ -25,10 +25,10 @@ module.exports = class TokenManager {
      * long token contains immutable data and long lived
      * master key must exists on any device to create short tokens
      */
-    genLongToken({userId, userKey}){
+    genLongToken({userId, userRole}){
         return jwt.sign(
             { 
-                userKey, 
+                userRole, 
                 userId,
             }, 
             this.config.dotEnv.LONG_TOKEN_SECRET, 
@@ -45,6 +45,8 @@ module.exports = class TokenManager {
     }
 
     _verifyToken({token, secret}){
+        console.log("my verifyLongToken: ", secret);
+
         let decoded = null;
         try {
             decoded = jwt.verify(token, secret);
@@ -53,6 +55,7 @@ module.exports = class TokenManager {
     }
 
     verifyLongToken({token}){
+        console.log("my verifyLongToken: ", token, this.config.dotEnv.LONG_TOKEN_SECRET);
         return this._verifyToken({token, secret: this.config.dotEnv.LONG_TOKEN_SECRET,})
     }
     verifyShortToken({token}){

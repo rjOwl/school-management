@@ -37,9 +37,10 @@ module.exports = class Classroom {
    * Create a new classroom
    */
   async create({ __longToken, name, school }) {
+    console.log("Inside create classroom: ", __longToken, name, school)
     // Check if the user is authorized to create a classroom
     if (!(await this.canManageClassroomModel(__longToken))) {
-      return this.unauthorizedResponse();
+    return this.unauthorizedResponse();
     }
     // Validate payload
     const validationResult = await this.validators.classroom.create({

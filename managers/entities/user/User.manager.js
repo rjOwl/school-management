@@ -68,7 +68,7 @@ class User {
 
     // Create user
     const user = await this.restServices.create(payload);
-
+    console.log("create user: ", user)
     // Generate long token for user session
     const longToken = this.tokenManager.genLongToken({
       userId: user.id,

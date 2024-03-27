@@ -41,7 +41,9 @@ module.exports = class School {
     // remove on production
     console.log("Inside create: ", __longToken, schoolManager, name, address, website)
     // Check if the user is authorized to create a school
-    if (!(await this.canManageSchoolModel(__longToken))) {
+    const userHsRights = await this.canManageSchoolModel(__longToken)
+    console.log("userHsRights: ", userHsRights)
+    if (!userHsRights) {
       return this.unauthorizedResponse();
     }
 
@@ -63,7 +65,10 @@ module.exports = class School {
     if (!currentManager) {
       return this.errorResponse("School Manager does not exist", 400);
     }
-
+    
+    const schoolExists = await this.schoolExists({name, address});
+    if(schoolExists)
+      return this.errorResponse("School already exists.", 400);
     // Create the school
     return await this.schoolServices.create({
       name,
@@ -183,12 +188,15 @@ module.exports = class School {
   async canManageSchoolModel(__longToken) {
     // remove on production
     console.log("canManageSchoolModel: ", __longToken);
-    const { userKey, userId } = __longToken;
+    const { userRole, userId } = __longToken;
     const user = await this.userServices.get({ id: userId });
+    console.log("user object: ", user);
+    console.log("user object: ", typeof userRole, typeof  Roles.SUPER_ADMIN, typeof user.role);
+    console.log("user object: ", userRole ===Roles.SUPER_ADMIN && user && user.role ===Roles.SUPER_ADMIN);
 
     // Check if the user is a super admin
     return (
-      userKey ===Roles.SUPER_ADMIN && user && user.key ===Roles.SUPER_ADMIN
+      userRole ===Roles.SUPER_ADMIN && user && user.role ===Roles.SUPER_ADMIN
     );
   }
 
@@ -209,6 +217,15 @@ module.exports = class School {
     return schoolManager;
   }
 
+  async schoolExists({name, address, }) {
+    // Retrieve the school manager
+    const school = await this.schoolServices.get({
+      name,
+      address,
+    });
+
+    return school;
+  }
   /**
    * Return unauthorized response
    * @returns
