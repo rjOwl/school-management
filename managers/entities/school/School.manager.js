@@ -54,7 +54,7 @@ module.exports = class School {
       website,
       schoolManager,
     });
-
+    console.log("validationResult: ", this.validators, validationResult)
     // Handle validation errors
     if (validationResult) {
       return this.validationErrorResponse(validationResult);
@@ -82,6 +82,7 @@ module.exports = class School {
    * Update a school
    */
   async update({ __longToken, id, name, address, website, schoolManager }) {
+    console.log("Inside update: ", __longToken, id, name, address, website, schoolManager)
     // Check if the user is authorized to update a school
     if (!(await this.canManageSchoolModel(__longToken))) {
       return this.unauthorizedResponse();
@@ -89,7 +90,6 @@ module.exports = class School {
 
     // Validate payload
     const validationResult = await this.validators.school.update({
-      id,
       name,
       address,
       website,
@@ -97,11 +97,12 @@ module.exports = class School {
     });
 
     // remove on production
-    console.log({ id, name, address, website, schoolManager });
+    console.log("validationResult: ", this.validators, validationResult);
     // Handle validation errors
     if (validationResult) {
       return this.validationErrorResponse(validationResult);
     }
+    console.log("HEeeeeeeeere", { id, name, address, website, schoolManager });
 
     const school = await this.schoolServices.get({ id });
 
@@ -125,20 +126,24 @@ module.exports = class School {
         website,
       })
       .save();
+      console.log("school obj: ", school);
+      if(school)
+        return this.successResponse("School updated successfully", 204);
 
-    return school;
+        return this.errorResponse("Failed to update school", 404)
   }
 
   /**
    * Delete a school by id
    */
-  async delete({ __longToken, id }) {
+  async delete({ __longToken, schoolId }) {
+    console.log("inside delete: ", __longToken, schoolId);
     // Check if the user is authorized to delete a school
     if (!(await this.canManageSchoolModel(__longToken))) {
       return this.unauthorizedResponse();
     }
 
-    const school = await this.schoolServices.get({ id });
+    const school = await this.schoolServices.get({ id: schoolId });
 
     // Handle if the school is not found
     if (!school) {
@@ -146,23 +151,26 @@ module.exports = class School {
     }
 
     // Delete the school
-    await school.remove();
-
-    return this.successResponse("School deleted successfully", 200);
+    const schoolDeleted = await this.schoolServices.delete({ id: schoolId });
+    console.log("schoolDeleted: ", schoolDeleted);
+    if(schoolDeleted)
+      return this.successResponse("School deleted successfully", 202);
+    
+    return this.errorResponse("Failed to delete school", 404);
   }
 
   /**
    * Get a school by id
    */
-  async get({ __longToken, id }) {
+  async get({ __longToken, schoolId }) {
     // Check if the user is authorized to get a school
     if (!(await this.canManageSchoolModel(__longToken))) {
       return this.unauthorizedResponse();
     }
 
     // Retrieve the school
-    const school = await this.schoolServices.get({ id });
-
+    const school = await this.schoolServices.get({ id: schoolId });
+    console.log("id, school: ", schoolId, school);
     // Handle if the school is not found
     if (!school) {
       return this.errorResponse("School not found", 404);
@@ -246,5 +254,9 @@ module.exports = class School {
    */
   errorResponse(message, code) {
     return { errors: [message], code, message, ok: false };
+  }
+  successResponse(message, code) {
+    console.log("successResponse: ", message, code);
+    return { message: message, code:code };
   }
 };
