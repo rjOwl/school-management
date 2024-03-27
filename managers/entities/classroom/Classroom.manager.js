@@ -52,10 +52,16 @@ module.exports = class Classroom {
     if (validationResult) {
       return this.validationErrorResponse(validationResult);
     }
+
     const currentSchool = await this.schoolExists(school);
     // Make sure the school exists
     if (!currentSchool) {
       return this.errorResponse("School not found", 404);
+    }
+    console.log("currentSchool: ", currentSchool)
+    const classroomExists = await this.schoolHasClassroom(currentSchool, name);
+    if (classroomExists) {
+      return this.errorResponse("Classroom exists", 404);
     }
 
     // Create classroom
@@ -72,7 +78,7 @@ module.exports = class Classroom {
   }
 
   /**
-   * Get all classrooms
+   * Get all classrooms in a school, Default all classrooms in DB
    */
   async getAll({ __longToken, school }) {
     // Check if the user is authorized to create a classroom
@@ -127,6 +133,7 @@ module.exports = class Classroom {
 
     const classroom = await this.classroomServices.delete({ id });
 
+    console.log("CLASSSSROOOOOOOOOOOOM: ", classroom);
     // Handle if the classroom is not found
     if (!classroom) {
       return this.errorResponse("Classroom not found", 404);
@@ -154,21 +161,21 @@ module.exports = class Classroom {
   /**
    * Update a classroom
    */
-  async update({ __longToken, id, name }) {
+  async update({ __longToken, id, name, school }) {
     // Check if the user is authorized to create a classroom
     if (!(await this.canManageClassroomModel(__longToken))) {
       return this.unauthorizedResponse();
     }
-
-    const validationResult = await this.validators.classroom.update({
-      id,
-      name,
-    });
-
+    id = Number(id)
+    // const validationResult = await this.validators.classroom.update({
+    //   name,
+    //   id,
+    //   school
+    // });
     // Handle validation errors
-    if (validationResult) {
-      return this.validationErrorResponse(validationResult);
-    }
+    // if (validationResult) {
+    //   return this.validationErrorResponse(validationResult);
+    // }
 
     const classroom = await this.classroomServices.get({ id });
 
@@ -231,5 +238,25 @@ module.exports = class Classroom {
    */
   errorResponse(message, code) {
     return { errors: [message], code, message, ok: false };
+  }
+
+  /**
+   * Check if the school has the classroom
+   * @param {*} school
+   * @param {*} classroom
+   * @returns
+   */
+  async schoolHasClassroom(school, classroom) {
+    // get all names of classrooms in the school
+    // check if the classroom name is in the list
+
+    // Perform a MongoDB query to find documents with matching IDs
+    const classroomDocs = await this.classroomServices.getAll({ _id: { $in: school.classrooms } });
+
+    // filter out the classroom names
+    const classroomNames = classroomDocs.map(doc => doc.name);
+    // Now you can check if a classroom with a certain name exists
+    const classroomExists = classroomNames.includes(classroom);
+    return classroomExists
   }
 };
